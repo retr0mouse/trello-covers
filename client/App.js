@@ -13,6 +13,7 @@ export default function App(){
     const [lastCardSelected, setLastCardSelected] = useState(false);
     const [firstCardSelected, setFirstCardSelected] = useState(true);
     const [message, setMessage] = useState("");
+    const [boardIsChosen, setBoardIsChosen] = useState(false);
 
     useEffect(() => {
         fetchTrelloBoards().catch(console.log);
@@ -21,6 +22,7 @@ export default function App(){
     useEffect(() => {
         if(selectedBoardId){
             fetchTrelloCards().catch(console.log);
+            setBoardIsChosen(true);
         }
         setSelectedCardIndex(0);
     }, [selectedBoardId])
@@ -56,6 +58,7 @@ export default function App(){
             clearTimeout(timeout);
         };
     }, [message])
+
     return(
         <div>
             <h1> Hello, WorldqwerW! </h1>
@@ -71,9 +74,9 @@ export default function App(){
                 </select>
             </label>
             <br/>
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex - 1)} disabled = {firstCardSelected}>⬅️</button>
+            <button onClick={() => setSelectedCardIndex(selectedCardIndex - 1)} disabled = {firstCardSelected || !boardIsChosen}>⬅️</button>
             <span>{cards[selectedCardIndex]?.name}</span>
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex + 1)} disabled = {lastCardSelected}>➡️</button>
+            <button onClick={() => setSelectedCardIndex(selectedCardIndex + 1)} disabled = {lastCardSelected || !boardIsChosen}>➡️</button>
             <br/>
             <input value={ query } onChange={ (event) => setQuery(event.target.value)}></input>
             <button onClick={() => fetchBooks(query)} >🔎</button>
