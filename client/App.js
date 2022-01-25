@@ -30,7 +30,9 @@ export default function App(){
     useEffect(() => {
         const bookName = cards[selectedCardIndex]?.name ?? "";
         setQuery(bookName);
-        fetchBooks(bookName);
+        if(boardIsChosen){
+            fetchBooks(bookName);
+        }
     }, [selectedCardIndex, cards])
 
     useEffect(() => {
@@ -53,7 +55,7 @@ export default function App(){
         if(!message){
             return;
         }
-        const timeout = setTimeout(() => setMessage(""), 1000);
+        const timeout = setTimeout(() => setMessage(""), 2000);
         return () => {
             clearTimeout(timeout);
         };
