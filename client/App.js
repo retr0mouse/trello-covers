@@ -122,7 +122,9 @@ export default function App(){
         });
         if(response.ok){
             setMessage("👍");
-            setSelectedCardIndex(selectedCardIndex + 1);
+            if(selectedCardIndex != cards.length - 1){
+                setSelectedCardIndex(selectedCardIndex + 1);
+            }
         }
         else{
             setMessage("👎");
