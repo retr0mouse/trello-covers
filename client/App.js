@@ -43,11 +43,11 @@ export default function App(){
             <br/>
             <input value={ query } onChange={ (event) => setQuery(event.target.value)}></input>
             <button onClick={() => fetchBooks(query)} >🔎</button>
-            <ul>
+            <div className="cover-container">
                 {books.map((book) => {
-                    return (<li key={book.id}>{book.volumeInfo.title}<img src={book.volumeInfo.imageLinks?.thumbnail}></img></li>);
+                    return (<div key={book.id}><img src={book.volumeInfo.imageLinks?.thumbnail}></img><br/><button onClick={() => uploadCover(book.volumeInfo.imageLinks?.thumbnail)}>✅</button></div>);
                 })}
-            </ul>
+            </div>
         </div>
     );
 
@@ -76,6 +76,11 @@ export default function App(){
         setCards(data);
         console.log(data);
     }
+    
+    function uploadCover(thumbnail){
+        
+    }
+
 };
 
 //https://www.googleapis.com/books/v1/volumes?q=navalny&key=AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY
