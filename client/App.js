@@ -10,6 +10,8 @@ export default function App(){
     const [cards, setCards] = useState([]);
     const [selectedBoardId, setSelectedBoardId] = useState("");
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
+    const [lastCardSelected, setLastCardSelected] = useState(false);
+    const [firstCardSelected, setFirstCardSelected] = useState(true);
 
     useEffect(() => {
         fetchTrelloBoards().catch(console.log);
@@ -23,8 +25,29 @@ export default function App(){
 
     useEffect(() => {
         setQuery(cards[selectedCardIndex]?.name ?? "");
-    }, [selectedCardIndex])
+    }, [selectedCardIndex, cards])
 
+    useEffect(() => {
+        // if(selectedCardIndex < 0){
+        //     setSelectedCardIndex(0);
+        // }
+        // if(cards.length > 0 && selectedCardIndex > cards.length - 1){
+        //     setSelectedCardIndex(cards.length - 1);
+        // }
+        if(selectedCardIndex === 0){
+            setFirstCardSelected(true);
+        }
+        else{
+            setFirstCardSelected(false);
+        }
+        if(selectedCardIndex === cards.length - 1){
+            setLastCardSelected(true);
+        }
+        else{
+            setLastCardSelected(false);
+        }
+        
+    }, [selectedCardIndex])
     return(
         <div>
             <h1> Hello, WorldqwerW! </h1>
@@ -40,14 +63,14 @@ export default function App(){
                 </select>
             </label>
             <br/>
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex - 1)}>⬅️</button>
+            <button onClick={() => setSelectedCardIndex(selectedCardIndex - 1)} disabled = {firstCardSelected}>⬅️</button>
             <span>{cards[selectedCardIndex]?.name}</span>
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex + 1)}>➡️</button>
+            <button onClick={() => setSelectedCardIndex(selectedCardIndex + 1)} disabled = {lastCardSelected}>➡️</button>
             <br/>
             <input value={ query } onChange={ (event) => setQuery(event.target.value)}></input>
             <button onClick={() => fetchBooks(query)} >🔎</button>
             <div className="cover-container">
-                {books.map((book) => {
+                {books?.map((book) => {
                     return (<div key={book.id}><img src={book.volumeInfo.imageLinks?.thumbnail}></img><br/><button onClick={() => uploadCover(book.volumeInfo.imageLinks?.thumbnail)}>✅</button></div>);
                 })}
             </div>
