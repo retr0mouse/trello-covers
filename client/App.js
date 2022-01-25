@@ -77,33 +77,14 @@ export default function App(){
         console.log(data);
     }
     
-    function uploadCover(thumbnail){
-        
+    async function uploadCover(thumbnail){
+        const selectedCard = cards[selectedCardIndex];
+        const response = await fetch(`https://api.trello.com/1/cards/${selectedCard.id}/attachments?key=${trelloKey}&token=${trelloToken}&setCover=${true}&url=${encodeURIComponent(thumbnail)}`,{
+            method: 'POST',r
+        });
+        const data = await response.json();
     }
 
 };
 
-//https://www.googleapis.com/books/v1/volumes?q=navalny&key=AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY
-//AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY
-//https://www.googleapis.com/books/v1/volumes?q=search+terms
-
-//const fetch = require('node-fetch');
-
-// fetch('https://api.trello.com/1/tokens/{token}/member', {
-//     method: 'GET',
-//     headers: {
-//       'Accept': 'application/json'
-//     }
-//   })
-//     .then(response => {
-//       console.log(
-//         `Response: ${response.status} ${response.statusText}`
-//       );
-//       return response.text();
-//     })
-//     .then(text => console.log(text))
-//     .catch(err => console.error(err));
-
-//BUG TRACKER
-// решиь проблему: selected board id undefined
-// setSelectedCardIndex < len()
+//https://api.trello.com/1/cards/{id}/attachments
