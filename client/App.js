@@ -8,7 +8,7 @@ export default function App(){
     const [books, setBooks] = useState([]);
     const [boards, setBoards] = useState([]);
     const [cards, setCards] = useState([]);
-    const [selectedBoardId, setSelectedBoardId] = useState();
+    const [selectedBoardId, setSelectedBoardId] = useState("");
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
 
     useEffect(() => {
@@ -16,7 +16,9 @@ export default function App(){
     }, []);
 
     useEffect(() => {
-        fetchTrelloCards().catch(console.log);
+        if(selectedBoardId){
+            fetchTrelloCards().catch(console.log);
+        }
     }, [selectedBoardId])
 
     useEffect(() => {
@@ -31,6 +33,7 @@ export default function App(){
                 <select value={selectedBoardId} onChange={(event) => {
                         setSelectedBoardId(event.target.value);
                     }}>
+                    <option value="" disabled>Choose board</option>
                     {boards.map((board) => {
                         return (<option key={board.id} value={board.id}>{board.name}</option>);
                     })}
