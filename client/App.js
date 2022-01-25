@@ -12,6 +12,7 @@ export default function App(){
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
     const [lastCardSelected, setLastCardSelected] = useState(false);
     const [firstCardSelected, setFirstCardSelected] = useState(true);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         fetchTrelloBoards().catch(console.log);
@@ -28,12 +29,6 @@ export default function App(){
     }, [selectedCardIndex, cards])
 
     useEffect(() => {
-        // if(selectedCardIndex < 0){
-        //     setSelectedCardIndex(0);
-        // }
-        // if(cards.length > 0 && selectedCardIndex > cards.length - 1){
-        //     setSelectedCardIndex(cards.length - 1);
-        // }
         if(selectedCardIndex === 0){
             setFirstCardSelected(true);
         }
@@ -48,6 +43,16 @@ export default function App(){
         }
         
     }, [selectedCardIndex])
+
+    useEffect(() => {
+        if(!message){
+            return;
+        }
+        const timeout = setTimeout(() => setMessage(""), 1000);
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [message])
     return(
         <div>
             <h1> Hello, WorldqwerW! </h1>
@@ -74,6 +79,11 @@ export default function App(){
                     return (<div key={book.id}><img src={book.volumeInfo.imageLinks?.thumbnail}></img><br/><button onClick={() => uploadCover(book.volumeInfo.imageLinks?.thumbnail)}>✅</button></div>);
                 })}
             </div>
+            {message && 
+                <div id="message_box">
+                    <h4>{message}</h4>
+                </div>
+            }
         </div>
     );
 
@@ -100,17 +110,19 @@ export default function App(){
         const response = await fetch(`https://api.trello.com/1/boards/${selectedBoardId}/cards?key=${trelloKey}&token=${trelloToken}`);
         const data = await response.json();
         setCards(data);
-        console.log(data);
     }
     
     async function uploadCover(thumbnail){
         const selectedCard = cards[selectedCardIndex];
         const response = await fetch(`https://api.trello.com/1/cards/${selectedCard.id}/attachments?key=${trelloKey}&token=${trelloToken}&setCover=${true}&url=${encodeURIComponent(thumbnail)}`,{
-            method: 'POST',r
+            method: 'POST',
         });
-        const data = await response.json();
+        if(response.ok){
+            setMessage("👍");
+        }
+        else{
+            setMessage("👎");
+        }
     }
 
 };
-
-//https://api.trello.com/1/cards/{id}/attachments
