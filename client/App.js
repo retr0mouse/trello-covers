@@ -22,10 +22,13 @@ export default function App(){
         if(selectedBoardId){
             fetchTrelloCards().catch(console.log);
         }
+        setSelectedCardIndex(0);
     }, [selectedBoardId])
 
     useEffect(() => {
-        setQuery(cards[selectedCardIndex]?.name ?? "");
+        const bookName = cards[selectedCardIndex]?.name ?? "";
+        setQuery(bookName);
+        fetchBooks(bookName);
     }, [selectedCardIndex, cards])
 
     useEffect(() => {
@@ -119,6 +122,7 @@ export default function App(){
         });
         if(response.ok){
             setMessage("👍");
+            setSelectedCardIndex(selectedCardIndex + 1);
         }
         else{
             setMessage("👎");
