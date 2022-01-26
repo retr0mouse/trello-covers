@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react"
+import { GoogleAPI } from "./GoogleAPI";
+import { TrelloAPI } from "./TrelloAPI";
 
 export default function App() {
     const [query, setQuery] = useState("kekw");
@@ -89,8 +91,7 @@ export default function App() {
     );
 
     async function fetchBooks(name) {
-        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${name}&key=AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY`);
-        const data = await response.json();
+        const data = await GoogleAPI.getBooks(name);
         const filteredBooks = data.items.filter((book) => book.volumeInfo.imageLinks);
         if (!filteredBooks.length) {
             setMessage("No covers for this book found");
@@ -98,32 +99,21 @@ export default function App() {
         setBooks(filteredBooks);
     }
 
-    async function getTrelloMember() {
-        const response = await fetch(`https://api.trello.com/1/tokens/${trelloToken}/member?key=${trelloKey}`);
-        console.log(response);
-        if (response.ok) {
-            setMessage("Inserted credentials are correct");
-            return await response.json();
-        }
-        else {
+    async function fetchTrelloBoards() {
+        let member;
+        try {
+            member = await TrelloAPI.getMember(trelloKey, trelloToken);
+        } catch (error) {
             setMessage("Inserted credentials are not correct");
             return;
         }
-    }
-
-    async function fetchTrelloBoards() {
-        const member = await getTrelloMember();
-        if (!member) {
-            return;
-        }
-        const response = await fetch(`https://api.trello.com/1/members/${member.id}/boards?key=${trelloKey}&token=${trelloToken}`);
-        const data = await response.json();
-        setBoards(data);
+        setMessage("Inserted credentials are correct");
+        const boards = await TrelloAPI.getBoards(member.id, trelloKey, trelloToken);
+        setBoards(boards);
     }
 
     async function fetchTrelloCards() {
-        const response = await fetch(`https://api.trello.com/1/boards/${selectedBoardId}/cards?key=${trelloKey}&token=${trelloToken}`);
-        const cards = await response.json();
+        const cards = await TrelloAPI.getCards(selectedBoardId, trelloKey, trelloToken);
         const filteredCards = cards.filter((card) => !card.cover.idAttachment);
         if (!filteredCards.length) {
             setMessage("No cards without covers");
@@ -133,18 +123,16 @@ export default function App() {
 
     async function uploadCover(thumbnail) {
         const selectedCard = cards[selectedCardIndex];
-        const response = await fetch(`https://api.trello.com/1/cards/${selectedCard.id}/attachments?key=${trelloKey}&token=${trelloToken}&setCover=${true}&url=${encodeURIComponent(thumbnail)}`, {
-            method: 'POST',
-        });
-        if (response.ok) {
-            selectedCard.thumbnail = thumbnail;
-            setMessage("👍");
-            if (selectedCardIndex != cards.length - 1) {
-                setSelectedCardIndex(selectedCardIndex + 1);
-            }
-        }
-        else {
+        try {
+            await TrelloAPI.addAttachment(thumbnail, selectedCard.id, trelloKey, trelloToken); 
+        } catch(error){
             setMessage("👎");
+            return;
+        }
+        selectedCard.thumbnail = thumbnail;
+        setMessage("👍");
+        if (selectedCardIndex != cards.length - 1) {
+            setSelectedCardIndex(selectedCardIndex + 1);
         }
     }
 };
