@@ -10,10 +10,7 @@ export default function App(){
     const [cards, setCards] = useState([]);
     const [selectedBoardId, setSelectedBoardId] = useState("");
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
-    const [lastCardSelected, setLastCardSelected] = useState(false);
-    const [firstCardSelected, setFirstCardSelected] = useState(true);
     const [message, setMessage] = useState("");
-    const [boardIsChosen, setBoardIsChosen] = useState(false);
 
     useEffect(() => {
         fetchTrelloBoards().catch(console.log);
@@ -22,7 +19,6 @@ export default function App(){
     useEffect(() => {
         if(selectedBoardId){
             fetchTrelloCards().catch(console.log);
-            setBoardIsChosen(true);
         }
         setSelectedCardIndex(0);
     }, [selectedBoardId])
@@ -30,26 +26,10 @@ export default function App(){
     useEffect(() => {
         const bookName = cards[selectedCardIndex]?.name ?? "";
         setQuery(bookName);
-        if(boardIsChosen){
+        if(selectedBoardId){
             fetchBooks(bookName);
         }
     }, [selectedCardIndex, cards])
-
-    useEffect(() => {
-        if(selectedCardIndex === 0){
-            setFirstCardSelected(true);
-        }
-        else{
-            setFirstCardSelected(false);
-        }
-        if(selectedCardIndex === cards.length - 1){
-            setLastCardSelected(true);
-        }
-        else{
-            setLastCardSelected(false);
-        }
-        
-    }, [selectedCardIndex])
 
     useEffect(() => {
         if(!message){
@@ -76,9 +56,9 @@ export default function App(){
                 </select>
             </label>
             <br/>
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex - 1)} disabled = {firstCardSelected || !boardIsChosen}>⬅️</button>
+            <button onClick={() => setSelectedCardIndex(selectedCardIndex - 1)} disabled = {selectedCardIndex === 0 || selectedBoardId === "" }>⬅️</button>
             <span>{cards[selectedCardIndex]?.name}</span>
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex + 1)} disabled = {lastCardSelected || !boardIsChosen}>➡️</button>
+            <button onClick={() => setSelectedCardIndex(selectedCardIndex + 1)} disabled = {selectedCardIndex === cards.length - 1 || selectedBoardId === ""}>➡️</button>
             <br/>
             <input value={ query } onChange={ (event) => setQuery(event.target.value)}></input>
             <button onClick={() => fetchBooks(query)} >🔎</button>
@@ -118,6 +98,7 @@ export default function App(){
         const response = await fetch(`https://api.trello.com/1/boards/${selectedBoardId}/cards?key=${trelloKey}&token=${trelloToken}`);
         const data = await response.json();
         setCards(data);
+        console.log(data);
     }
     
     async function uploadCover(thumbnail){
