@@ -64,7 +64,7 @@ export default function App() {
             <button onClick={() => fetchBooks(query)} >🔎</button>
             <div className="cover-container">
                 {books?.map((book) => {
-                    return (<div key={book.id}><img src={book.volumeInfo.imageLinks?.thumbnail}></img><br /><button onClick={() => uploadCover(book.volumeInfo.imageLinks?.thumbnail)}>✅</button></div>);
+                    return (<div className={cards[selectedCardIndex]?.thumbnail === book.volumeInfo.imageLinks?.thumbnail ? "selected-cover" : ""} key={book.id}><img src={book.volumeInfo.imageLinks?.thumbnail}></img><br /><button onClick={() => uploadCover(book.volumeInfo.imageLinks?.thumbnail)}>✅</button></div>);
                 })}
             </div>
             {message &&
@@ -114,6 +114,7 @@ export default function App() {
             method: 'POST',
         });
         if (response.ok) {
+            selectedCard.thumbnail = thumbnail;
             setMessage("👍");
             if (selectedCardIndex != cards.length - 1) {
                 setSelectedCardIndex(selectedCardIndex + 1);
@@ -123,5 +124,4 @@ export default function App() {
             setMessage("👎");
         }
     }
-
 };
