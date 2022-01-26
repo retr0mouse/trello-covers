@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react"
 
-const trelloKey = "88ebf07f6ece8dac34b02985cf2dc5f5";
-const trelloToken = "7c589843f748dbf819004648d12c345e3f7919e8ebd548829ce890f0748705f7";
-
 export default function App() {
     const [query, setQuery] = useState("kekw");
+    const [trelloToken, setTrelloToken] = useState(window.localStorage.getItem("trelloToken") || "");
+    const [trelloKey, setTrelloKey] = useState(window.localStorage.getItem("trelloKey") || "");
     const [books, setBooks] = useState([]);
     const [boards, setBoards] = useState([]);
     const [cards, setCards] = useState([]);
     const [selectedBoardId, setSelectedBoardId] = useState("");
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
     const [message, setMessage] = useState("");
-
-    useEffect(() => {
-        fetchTrelloBoards().catch(console.log);
-    }, []);
 
     useEffect(() => {
         if (selectedBoardId) {
@@ -44,6 +39,24 @@ export default function App() {
     return (
         <div>
             <h1> Hello, WorldqwerW! </h1>
+            <label>
+                Trello key:
+                <input value={trelloKey} type="text" onChange={(event) => {
+                    setTrelloKey(event.target.value);
+                    window.localStorage.setItem("trelloKey", event.target.value);
+                }}></input>
+                <br />
+            </label>
+            <label>
+                Trello token:
+                <input value={trelloToken} type="text" onChange={(event) => {
+                    setTrelloToken(event.target.value);
+                    window.localStorage.setItem("trelloToken", event.target.value)
+                }}></input>
+                <br />
+            </label>
+            <button onClick={() => fetchTrelloBoards()}>🚗</button>
+            <br />
             <label>
                 board:
                 <select value={selectedBoardId} onChange={(event) => {
@@ -87,12 +100,22 @@ export default function App() {
 
     async function getTrelloMember() {
         const response = await fetch(`https://api.trello.com/1/tokens/${trelloToken}/member?key=${trelloKey}`);
-        const data = await response.json();
-        return data;
+        console.log(response);
+        if (response.ok) {
+            setMessage("Inserted credentials are correct");
+            return await response.json();
+        }
+        else {
+            setMessage("Inserted credentials are not correct");
+            return;
+        }
     }
 
     async function fetchTrelloBoards() {
         const member = await getTrelloMember();
+        if (!member) {
+            return;
+        }
         const response = await fetch(`https://api.trello.com/1/members/${member.id}/boards?key=${trelloKey}&token=${trelloToken}`);
         const data = await response.json();
         setBoards(data);
