@@ -96,9 +96,12 @@ export default function App(){
 
     async function fetchTrelloCards(){
         const response = await fetch(`https://api.trello.com/1/boards/${selectedBoardId}/cards?key=${trelloKey}&token=${trelloToken}`);
-        const data = await response.json();
-        setCards(data);
-        console.log(data);
+        const cards = await response.json();
+        const filteredCards = cards.filter((card) => !card.cover.idAttachment);
+        if(!filteredCards.length){
+            setMessage("No cards without covers");
+        }
+        setCards(filteredCards);
     }
     
     async function uploadCover(thumbnail){
