@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react" //"React" is a default export
 import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
 import { TrelloAPI } from "./apis/TrelloAPI";
+import { TrelloBoards } from "./components/TrelloBoards";
 import { TrelloCredentials } from "./components/TrelloCredentials";
 
 export default function App() {
@@ -73,17 +74,11 @@ export default function App() {
             />
             
             <br />
-            <label>
-                board:
-                <select value={selectedBoardId} onChange={(event) => {
-                    setSelectedBoardId(event.target.value);
-                }}>
-                    <option value="" disabled>Choose board</option>
-                    {boards.map((board) => {
-                        return (<option key={board.id} value={board.id}>{board.name}</option>);
-                    })}
-                </select>
-            </label>
+            <TrelloBoards 
+                boards={boards} 
+                selectedBoardId={selectedBoardId} 
+                onBoardSelected={(boardId) => setSelectedBoardId(boardId)}
+            />
             <br />
             <label>Books
             <input name="bookCheckbox" type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
