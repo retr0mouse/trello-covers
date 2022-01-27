@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react"
-import { GoogleAPI } from "./GoogleAPI";
-import { MovieAPI } from "./MovieDatabaseAPI";
-import { TrelloAPI } from "./TrelloAPI";
+import React, { useState, useEffect } from "react" //"React" is a default export
+import { GoogleAPI } from "./apis/GoogleAPI";
+import { MovieAPI } from "./apis/MovieDatabaseAPI";
+import { TrelloAPI } from "./apis/TrelloAPI";
+import { TrelloCredentials } from "./components/TrelloCredentials";
 
 export default function App() {
     const [query, setQuery] = useState("kekw");
@@ -56,23 +57,21 @@ export default function App() {
     return (
         <div>
             <h1> Hello, WorldqwerW! </h1>
-            <label>
-                Trello key:
-                <input value={trelloKey} type="text" onChange={(event) => {
-                    setTrelloKey(event.target.value);
-                    window.localStorage.setItem("trelloKey", event.target.value);
-                }}></input>
-                <br />
-            </label>
-            <label>
-                Trello token:
-                <input value={trelloToken} type="text" onChange={(event) => {
-                    setTrelloToken(event.target.value);
-                    window.localStorage.setItem("trelloToken", event.target.value)
-                }}></input>
-                <br />
-            </label>
-            <button onClick={() => fetchTrelloBoards()}>🚗</button>
+            <TrelloCredentials 
+                trelloKey={trelloKey} 
+                trelloToken={trelloToken} 
+                onKeyChanged={(key) => {
+                    setTrelloKey(key);
+                    window.localStorage.setItem("trelloKey", key);
+                }} 
+                onTokenChanged={(token) => {
+                    setTrelloToken(token);
+                    window.localStorage.setItem("trelloToken", token);
+                    console.log(token);
+                }}
+                onValidate={() => fetchTrelloBoards()}
+            />
+            
             <br />
             <label>
                 board:
