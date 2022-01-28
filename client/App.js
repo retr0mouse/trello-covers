@@ -3,6 +3,7 @@ import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
 import { TrelloAPI } from "./apis/TrelloAPI";
 import { Covers } from "./components/Covers";
+import { Message } from "./components/Message";
 import { TrelloBoards } from "./components/TrelloBoards";
 import { TrelloCards } from "./components/TrelloCards";
 import { TrelloCredentials } from "./components/TrelloCredentials";
@@ -121,11 +122,10 @@ export default function App() {
                 selectedItem={cards[selectedCardIndex]?.thumbnail}
                 onSelected={(item) => uploadCover(item)}
             />
-            {message &&
-                <div id="message_box">
-                    <h4>{message}</h4>
-                </div>
-            }
+            
+            <Message 
+                message={message}
+            />
         </div>
     );
 
