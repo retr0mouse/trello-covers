@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react" //"React" is a default export
 import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
 import { TrelloAPI } from "./apis/TrelloAPI";
+import { Covers } from "./components/Covers";
 import { TrelloBoards } from "./components/TrelloBoards";
 import { TrelloCards } from "./components/TrelloCards";
 import { TrelloCredentials } from "./components/TrelloCredentials";
@@ -112,19 +113,14 @@ export default function App() {
                     }
                 }
             }} >🔎</button>
-            <div className="cover-container">
-                {books?.map((book) => {
-                    return (<div className={cards[selectedCardIndex]?.thumbnail === book.volumeInfo.imageLinks?.thumbnail ? "selected-cover" : ""} key={book.id}><img src={book.volumeInfo.imageLinks?.thumbnail}></img><br /><button onClick={() => uploadCover(book.volumeInfo.imageLinks?.thumbnail)}>✅</button></div>);
-                })}
-
-                {movies?.map((movie) => {
-                    return (
-                        <div key={movie.id} className={cards[selectedCardIndex]?.thumbnail === movie.poster_path ? "selected-cover" : ""}>
-                            <img width="128px" src={movie.poster_path}></img><br />
-                            <button onClick={() => uploadCover(movie.poster_path)}>✅</button>
-                        </div>)
-                })}
-            </div>
+            <Covers 
+                items={[
+                    ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail), 
+                    ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path)
+                ]}
+                selectedItem={cards[selectedCardIndex]?.thumbnail}
+                onSelected={(item) => uploadCover(item)}
+            />
             {message &&
                 <div id="message_box">
                     <h4>{message}</h4>
