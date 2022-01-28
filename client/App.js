@@ -3,6 +3,7 @@ import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
 import { TrelloAPI } from "./apis/TrelloAPI";
 import { TrelloBoards } from "./components/TrelloBoards";
+import { TrelloCards } from "./components/TrelloCards";
 import { TrelloCredentials } from "./components/TrelloCredentials";
 
 export default function App() {
@@ -74,7 +75,7 @@ export default function App() {
             />
             
             <br />
-            <TrelloBoards 
+            <TrelloBoards
                 boards={boards} 
                 selectedBoardId={selectedBoardId} 
                 onBoardSelected={(boardId) => setSelectedBoardId(boardId)}
@@ -87,9 +88,12 @@ export default function App() {
             <input name="movieCheckbox" type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
             </label>
             <br />
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex - 1)} disabled={selectedCardIndex === 0 || selectedBoardId === ""}>⬅️</button>
-            <span>{cards[selectedCardIndex]?.name}</span>
-            <button onClick={() => setSelectedCardIndex(selectedCardIndex + 1)} disabled={selectedCardIndex === cards.length - 1 || selectedBoardId === ""}>➡️</button>
+            <TrelloCards 
+                cards={cards}
+                selectedCardIndex={selectedCardIndex}
+                disabled={selectedBoardId === ""}
+                onSelected={(index) => setSelectedCardIndex(index)}
+            />
             <br />
             <input value={query} onChange={(event) => setQuery(event.target.value)}></input>
             <button onClick={() => {

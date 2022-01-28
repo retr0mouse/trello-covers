@@ -2,11 +2,11 @@ export function TrelloBoards({ boards, selectedBoardId, onBoardSelected }) {
     return (
         <label>
             board:
-            <select 
+            <select
                 value={selectedBoardId} 
                 onChange={(event) => onBoardSelected(event.target.value)}
             >
-                <option 
+                <option
                     value="" 
                     disabled>Choose board
                 </option>
