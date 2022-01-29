@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react" //"React" is a default export
 import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
 import { TrelloAPI } from "./apis/TrelloAPI";
+import { TwitchAPI } from "./apis/TwitchAPI";
 import { Covers } from "./components/Covers";
 import { Message } from "./components/Message";
 import { SearchInput } from "./components/SearchInput";
@@ -15,6 +16,7 @@ export default function App() {
     const [trelloKey, setTrelloKey] = useState(window.localStorage.getItem("trelloKey") || "");
     const [books, setBooks] = useState([]);
     const [movies, setMovies] = useState([]);
+    const [games, setGames] = useState([]);
     const [boards, setBoards] = useState([]);
     const [cards, setCards] = useState([]);
     const [selectedBoardId, setSelectedBoardId] = useState("");
@@ -28,6 +30,7 @@ export default function App() {
             fetchTrelloCards().catch(console.log);
         }
         setSelectedCardIndex(0);
+        console.log(fetchGame("Last of Us"));
     }, [selectedBoardId])
 
     useEffect(() => {
@@ -178,5 +181,10 @@ export default function App() {
             filteredMovies.forEach((movie) => movie.poster_path = "https://image.tmdb.org/t/p/w154/" + movie.poster_path);
         }
         setMovies(filteredMovies);
+    }
+
+    async function fetchGame(name) {
+        const data = await TwitchAPI.getCovers(name);
+        setGames(data);
     }
 };
