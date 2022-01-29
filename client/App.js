@@ -4,6 +4,7 @@ import { MovieAPI } from "./apis/MovieDatabaseAPI";
 import { TrelloAPI } from "./apis/TrelloAPI";
 import { Covers } from "./components/Covers";
 import { Message } from "./components/Message";
+import { SearchInput } from "./components/SearchInput";
 import { TrelloBoards } from "./components/TrelloBoards";
 import { TrelloCards } from "./components/TrelloCards";
 import { TrelloCredentials } from "./components/TrelloCredentials";
@@ -97,23 +98,16 @@ export default function App() {
                 onSelected={(index) => setSelectedCardIndex(index)}
             />
             <br />
-            <input value={query} onChange={(event) => setQuery(event.target.value)}></input>
-            <button onClick={() => {
-                if (query) {
-                    if(booksChecked) {
-                        fetchBooks(query);
-                    }
-                    else{
-                        setBooks([]);
-                    }
-                    if(moviesChecked) {
-                        fetchMovie(query);
-                    }
-                    else{
-                        setMovies([]);
-                    }
-                }
-            }} >🔎</button>
+            <SearchInput 
+                query={query}
+                onTyped={(query) => setQuery(query)}
+                onBooksNotChecked={(book) => setBooks(book)}
+                onMoviesNotChecked={(book) => setMovies(book)}
+                onBooksChecked={(book) => fetchBooks(book)}
+                onMoviesChecked={(movie) => fetchMovie(movie)}
+                booksChecked={booksChecked}
+                moviesChecked={moviesChecked}
+            />
             <Covers 
                 items={[
                     ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail), 
@@ -122,7 +116,6 @@ export default function App() {
                 selectedItem={cards[selectedCardIndex]?.thumbnail}
                 onSelected={(item) => uploadCover(item)}
             />
-            
             <Message 
                 message={message}
             />
