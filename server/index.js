@@ -70,6 +70,42 @@ router.get("/books/:title", async (ctx, next) => {
     ctx.body = data;
 });
 
+router.get("/members/:token/:key", async(ctx, next) => {
+    const token = ctx.params.token;
+    const key = ctx.params.key;
+    const response = await fetch(`https://api.trello.com/1/tokens/${token}/member?key=${key}`);
+    const data = await response.json();
+    ctx.body = data;
+})
+
+router.get("/boards/:id/:key/:token", async(ctx, next) => {
+    const id = ctx.params.id;
+    const key = ctx.params.key;
+    const token = ctx.params.token;
+    const response = await fetch(`https://api.trello.com/1/members/${id}/boards?key=${key}&token=${token}`);
+    const data = await response.json();
+    ctx.body = data;
+})
+
+router.get("/cards/:selectedId/:key/:token", async(ctx, next) => {
+    const selectedId = ctx.params.selectedId;
+    const key = ctx.params.key;
+    const token = ctx.params.token;
+    const response = await fetch(`https://api.trello.com/1/boards/${selectedId}/cards?key=${key}&token=${token}`);
+    const data = await response.json();
+    ctx.body = data;
+})
+
+router.get("/attachment/:selectedId/:key/:token/:url", async(ctx, next) => {
+    const selectedId = ctx.params.selectedId;
+    const key = ctx.params.key;
+    const token = ctx.params.token;
+    const url = ctx.params.url;
+    const response = await fetch(`https://api.trello.com/1/cards/${selectedId}/attachments?key=${key}&token=${token}&setCover=${true}&url=${encodeURIComponent(url)}`, {
+        method: "POST",
+    });
+})
+
 app
     .use(cors())
     .use(router.routes())

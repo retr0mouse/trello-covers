@@ -1,6 +1,6 @@
 export class TrelloAPI{
     static async getMember(trelloKey, trelloToken) {
-        const response = await fetch(`https://api.trello.com/1/tokens/${trelloToken}/member?key=${trelloKey}`);
+        const response = await fetch(`http://localhost:3000/members/${trelloToken}/${trelloKey}`);
         if(!response.ok){
             throw new Error("Request failed with status code " + response.status);
         }
@@ -8,7 +8,7 @@ export class TrelloAPI{
     }
 
     static async getBoards(memberId, trelloKey, trelloToken) {
-        const response = await fetch(`https://api.trello.com/1/members/${memberId}/boards?key=${trelloKey}&token=${trelloToken}`);
+        const response = await fetch(`http://localhost:3000/boards/${memberId}/${trelloKey}/${trelloToken}`);
         if(!response.ok){
             throw new Error("Request failed with status code " + response.status);
         }
@@ -16,15 +16,15 @@ export class TrelloAPI{
     }
 
     static async getCards(selectedBoardId, trelloKey, trelloToken) {
-        const response = await fetch(`https://api.trello.com/1/boards/${selectedBoardId}/cards?key=${trelloKey}&token=${trelloToken}`);
+        const response = await fetch(`http://localhost:3000/cards/${selectedBoardId}/${trelloKey}/${trelloToken}`);
         if(!response.ok){
             throw new Error("Request failed with status code " + response.status);
         }
         return response.json();
     }
 
-    static async addAttachment(imageUrl, selectedCardId, trelloKey, trelloToken) {
-        const response = await fetch(`https://api.trello.com/1/cards/${selectedCardId}/attachments?key=${trelloKey}&token=${trelloToken}&setCover=${true}&url=${encodeURIComponent(imageUrl)}`, {
+    static async addAttachment(selectedCardId, trelloKey, trelloToken, imageUrl) {
+        const response = await fetch(`http://localhost:3000/attachment/${selectedCardId}/${trelloKey}/${trelloToken}/${imageUrl}`, {
             method: 'POST',
         });
         if (!response.ok) {
