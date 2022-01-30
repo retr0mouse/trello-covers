@@ -23,9 +23,6 @@ router.get('/games/:title', async (ctx, next) => {
                     where release_dates.platform = (6);
                     where name ~ *"` + ctx.params.title + `"*;`,
         });
-    if (!response.ok) {
-        throw new Error("Request failed with status code " + response.status);
-    }
     const gameIds = await response.json();
 
     // fetch covers for 4 game ids
@@ -41,9 +38,6 @@ router.get('/games/:title', async (ctx, next) => {
             body:  `fields url; limit 1;
                     where game = ` + gameIds[i].id + `;`,
         });
-        if (!response.ok) {
-            throw new Error("Request failed with status code " + response.status);
-        }
         const cover = (await response.json())[0];
         if(cover){
             covers.push(cover);
@@ -62,9 +56,16 @@ router.get('/games/:title', async (ctx, next) => {
     ctx.body = urls;
 });
 
-router.get("/movie/:title", async (ctx, next) => {
+router.get("/movies/:title", async (ctx, next) => {
     const title = ctx.params.title;
     const response = await fetch(`https://api.themoviedb.org/3/search/movie/?api_key=d0256790589a55b455aab52402dfc7bd&query=${title}&token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkMDI1Njc5MDU4OWE1NWI0NTVhYWI1MjQwMmRmYzdiZCIsInN1YiI6IjYxZjI1OTU2NTU5ZDIyMDEwNWNhMDZiNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._asLbJ7VJLrX69lbtJ0xfX7G8zLhyf1TzEy3Jhi_vW4`);
+    const data = await response.json();
+    ctx.body = data;
+});
+
+router.get("/books/:title", async (ctx, next) => {
+    const title = ctx.params.title;
+    const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${title}&key=AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY`);
     const data = await response.json();
     ctx.body = data;
 });

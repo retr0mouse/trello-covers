@@ -1,7 +1,9 @@
 export class GoogleAPI{
     static async getBooks(name) {
-        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${name}&key=AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY`);
-        const data = await response.json();
-        return data;
+        const response = await fetch(`http://localhost:3000/books/` + name);
+        if (!response.ok) {
+            throw new Error("Request failed with status code " + response.status);
+        }
+        return await response.json();
     }
 }

@@ -72,7 +72,7 @@ export default function App() {
         <div>
             <h1> Hello, WorldqwerW! </h1>
             <TrelloCredentials 
-                trelloKey={trelloKey} 
+                trelloKey={trelloKey}
                 trelloToken={trelloToken} 
                 onKeyChanged={(key) => {
                     setTrelloKey(key);
@@ -81,7 +81,6 @@ export default function App() {
                 onTokenChanged={(token) => {
                     setTrelloToken(token);
                     window.localStorage.setItem("trelloToken", token);
-                    console.log(token);
                 }}
                 onValidate={() => fetchTrelloBoards()}
             />
@@ -106,7 +105,7 @@ export default function App() {
             <TrelloCards 
                 cards={cards}
                 selectedCardIndex={selectedCardIndex}
-                disabled={selectedBoardId === ""}
+                disabled={selectedBoardId === "" || cards.length === 0}
                 onSelected={(index) => setSelectedCardIndex(index)}
             />
             <br />

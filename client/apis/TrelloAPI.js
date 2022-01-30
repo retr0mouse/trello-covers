@@ -9,11 +9,17 @@ export class TrelloAPI{
 
     static async getBoards(memberId, trelloKey, trelloToken) {
         const response = await fetch(`https://api.trello.com/1/members/${memberId}/boards?key=${trelloKey}&token=${trelloToken}`);
+        if(!response.ok){
+            throw new Error("Request failed with status code " + response.status);
+        }
         return response.json();
     }
 
     static async getCards(selectedBoardId, trelloKey, trelloToken) {
         const response = await fetch(`https://api.trello.com/1/boards/${selectedBoardId}/cards?key=${trelloKey}&token=${trelloToken}`);
+        if(!response.ok){
+            throw new Error("Request failed with status code " + response.status);
+        }
         return response.json();
     }
 
