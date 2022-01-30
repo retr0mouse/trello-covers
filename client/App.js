@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react" //"React" is a default export
 import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
 import { TrelloAPI } from "./apis/TrelloAPI";
+import { TwitchAPI } from "./apis/TwitchAPI";
 import { Covers } from "./components/Covers";
 import { Message } from "./components/Message";
 import { SearchInput } from "./components/SearchInput";
@@ -14,7 +15,8 @@ export default function App() {
     const [trelloToken, setTrelloToken] = useState(window.localStorage.getItem("trelloToken") || "");
     const [trelloKey, setTrelloKey] = useState(window.localStorage.getItem("trelloKey") || "");
     const [books, setBooks] = useState([]);
-    const [movies, setMovies] = useState([]);
+    const [movies, setMovies] = useState([]);                                             
+    const [games, setGames] = useState([]);
     const [boards, setBoards] = useState([]);
     const [cards, setCards] = useState([]);
     const [selectedBoardId, setSelectedBoardId] = useState("");
@@ -22,6 +24,7 @@ export default function App() {
     const [message, setMessage] = useState("");
     const [booksChecked, setBooksChecked] = useState(false);
     const [moviesChecked, setMoviesChecked] = useState(false);
+    const [gamesChecked, setGamesChecked] = useState(false);
 
     useEffect(() => {
         if (selectedBoardId) {
@@ -33,7 +36,7 @@ export default function App() {
     useEffect(() => {
         const title = cards[selectedCardIndex]?.name ?? "";
         setQuery(title);
-        if (selectedBoardId) {
+        if (selectedBoardId && title) {
             if(booksChecked){
                 fetchBooks(title);
             }
@@ -46,6 +49,17 @@ export default function App() {
             else{
                 setMovies([]);
             }
+            if(gamesChecked){
+                fetchGame(title);
+            }
+            else{
+                setGames([]);
+            }
+        }
+        else{
+            setBooks([]);
+            setMovies([]);
+            setGames([]);
         }
     }, [selectedCardIndex, cards])
 
@@ -63,7 +77,7 @@ export default function App() {
         <div>
             <h1> Hello, WorldqwerW! </h1>
             <TrelloCredentials 
-                trelloKey={trelloKey} 
+                trelloKey={trelloKey}
                 trelloToken={trelloToken} 
                 onKeyChanged={(key) => {
                     setTrelloKey(key);
@@ -72,7 +86,6 @@ export default function App() {
                 onTokenChanged={(token) => {
                     setTrelloToken(token);
                     window.localStorage.setItem("trelloToken", token);
-                    console.log(token);
                 }}
                 onValidate={() => fetchTrelloBoards()}
             />
@@ -85,16 +98,19 @@ export default function App() {
             />
             <br />
             <label>Books
-            <input name="bookCheckbox" type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
+            <input type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
             </label>
             <label>Movies
-            <input name="movieCheckbox" type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
+            <input type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
+            </label>
+            <label>Games
+            <input type="checkbox" onChange={() => setGamesChecked(!gamesChecked)}></input>
             </label>
             <br />
             <TrelloCards 
                 cards={cards}
                 selectedCardIndex={selectedCardIndex}
-                disabled={selectedBoardId === ""}
+                disabled={selectedBoardId === "" || cards.length === 0}
                 onSelected={(index) => setSelectedCardIndex(index)}
             />
             <br />
@@ -102,16 +118,20 @@ export default function App() {
                 query={query}
                 onTyped={(query) => setQuery(query)}
                 onBooksNotChecked={(book) => setBooks(book)}
-                onMoviesNotChecked={(book) => setMovies(book)}
+                onMoviesNotChecked={(movie) => setMovies(movie)}
+                onGamesNotChecked={(game) => setGames(game)}
                 onBooksChecked={(book) => fetchBooks(book)}
                 onMoviesChecked={(movie) => fetchMovie(movie)}
+                onGamesChecked={(game) => fetchGame(game)}
                 booksChecked={booksChecked}
                 moviesChecked={moviesChecked}
+                gamesChecked={gamesChecked}
             />
             <Covers 
                 items={[
                     ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail), 
-                    ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path)
+                    ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path),
+                    ...games,
                 ]}
                 selectedItem={cards[selectedCardIndex]?.thumbnail}
                 onSelected={(item) => uploadCover(item)}
@@ -129,6 +149,26 @@ export default function App() {
             setMessage("No covers for this book found");
         }
         setBooks(filteredBooks);
+    }
+
+    async function fetchMovie(name) {
+        const data = await MovieAPI.getMovie(name);
+        const filteredMovies = data.results.filter((movie) => movie.poster_path);
+        if (!filteredMovies.length) {
+            setMessage("No covers for this movie found");
+        }
+        else {
+            filteredMovies.forEach((movie) => movie.poster_path = "https://image.tmdb.org/t/p/w154/" + movie.poster_path);
+        }
+        setMovies(filteredMovies);
+    }
+
+    async function fetchGame(name) {
+        const data = await TwitchAPI.getCovers(name);
+        if (!data.length) {
+            setMessage("No covers for this game found");
+        }
+        setGames(data);
     }
 
     async function fetchTrelloBoards() {
@@ -166,17 +206,5 @@ export default function App() {
         if (selectedCardIndex != cards.length - 1) {
             setSelectedCardIndex(selectedCardIndex + 1);
         }
-    }
-
-    async function fetchMovie(name) {
-        const data = await MovieAPI.getMovie(name);
-        const filteredMovies = data.results.filter((movie) => movie.poster_path);
-        if (!filteredMovies.length) {
-            setMessage("No covers for this movie found");
-        }
-        else {
-            filteredMovies.forEach((movie) => movie.poster_path = "https://image.tmdb.org/t/p/w154/" + movie.poster_path);
-        }
-        setMovies(filteredMovies);
     }
 };
