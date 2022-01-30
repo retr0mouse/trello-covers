@@ -36,7 +36,7 @@ export default function App() {
     useEffect(() => {
         const title = cards[selectedCardIndex]?.name ?? "";
         setQuery(title);
-        if (selectedBoardId) {
+        if (selectedBoardId && title) {
             if(booksChecked){
                 fetchBooks(title);
             }
@@ -55,6 +55,11 @@ export default function App() {
             else{
                 setGames([]);
             }
+        }
+        else{
+            setBooks([]);
+            setMovies([]);
+            setGames([]);
         }
     }, [selectedCardIndex, cards])
 
@@ -146,6 +151,26 @@ export default function App() {
         setBooks(filteredBooks);
     }
 
+    async function fetchMovie(name) {
+        const data = await MovieAPI.getMovie(name);
+        const filteredMovies = data.results.filter((movie) => movie.poster_path);
+        if (!filteredMovies.length) {
+            setMessage("No covers for this movie found");
+        }
+        else {
+            filteredMovies.forEach((movie) => movie.poster_path = "https://image.tmdb.org/t/p/w154/" + movie.poster_path);
+        }
+        setMovies(filteredMovies);
+    }
+
+    async function fetchGame(name) {
+        const data = await TwitchAPI.getCovers(name);
+        if (!data.length) {
+            setMessage("No covers for this game found");
+        }
+        setGames(data);
+    }
+
     async function fetchTrelloBoards() {
         let member;
         try {
@@ -181,25 +206,5 @@ export default function App() {
         if (selectedCardIndex != cards.length - 1) {
             setSelectedCardIndex(selectedCardIndex + 1);
         }
-    }
-
-    async function fetchMovie(name) {
-        const data = await MovieAPI.getMovie(name);
-        const filteredMovies = data.results.filter((movie) => movie.poster_path);
-        if (!filteredMovies.length) {
-            setMessage("No covers for this movie found");
-        }
-        else {
-            filteredMovies.forEach((movie) => movie.poster_path = "https://image.tmdb.org/t/p/w154/" + movie.poster_path);
-        }
-        setMovies(filteredMovies);
-    }
-
-    async function fetchGame(name) {
-        const data = await TwitchAPI.getCovers(name);
-        if (!data.length) {
-            setMessage("No covers for this game found");
-        }
-        setGames(data);
     }
 };
