@@ -1,4 +1,4 @@
-export function SearchInput({query, onTyped, onBooksChecked, onMoviesChecked, onBooksNotChecked, onMoviesNotChecked, booksChecked, moviesChecked}) {
+export function SearchInput({query, onTyped, onBooksChecked, onMoviesChecked, onGamesChecked, onBooksNotChecked, onMoviesNotChecked, onGamesNotChecked, booksChecked, moviesChecked, gamesChecked}) {
     return (
         <>
             <input value={query} onChange={(event) => onTyped(event.target.value)}></input>
@@ -15,6 +15,12 @@ export function SearchInput({query, onTyped, onBooksChecked, onMoviesChecked, on
                     }
                     else {
                         onMoviesNotChecked([]);
+                    }
+                    if (gamesChecked) {
+                        onGamesChecked(query);
+                    }
+                    else {
+                        onGamesNotChecked([]);
                     }
                 }
             }} >🔎

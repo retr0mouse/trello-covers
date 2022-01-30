@@ -15,7 +15,7 @@ export default function App() {
     const [trelloToken, setTrelloToken] = useState(window.localStorage.getItem("trelloToken") || "");
     const [trelloKey, setTrelloKey] = useState(window.localStorage.getItem("trelloKey") || "");
     const [books, setBooks] = useState([]);
-    const [movies, setMovies] = useState([]);
+    const [movies, setMovies] = useState([]);                                             
     const [games, setGames] = useState([]);
     const [boards, setBoards] = useState([]);
     const [cards, setCards] = useState([]);
@@ -24,13 +24,13 @@ export default function App() {
     const [message, setMessage] = useState("");
     const [booksChecked, setBooksChecked] = useState(false);
     const [moviesChecked, setMoviesChecked] = useState(false);
+    const [gamesChecked, setGamesChecked] = useState(false);
 
     useEffect(() => {
         if (selectedBoardId) {
             fetchTrelloCards().catch(console.log);
         }
         setSelectedCardIndex(0);
-        console.log(fetchGame("Last of Us"));
     }, [selectedBoardId])
 
     useEffect(() => {
@@ -48,6 +48,12 @@ export default function App() {
             }
             else{
                 setMovies([]);
+            }
+            if(gamesChecked){
+                fetchGame(title);
+            }
+            else{
+                setGames([]);
             }
         }
     }, [selectedCardIndex, cards])
@@ -88,10 +94,13 @@ export default function App() {
             />
             <br />
             <label>Books
-            <input name="bookCheckbox" type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
+            <input type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
             </label>
             <label>Movies
-            <input name="movieCheckbox" type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
+            <input type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
+            </label>
+            <label>Games
+            <input type="checkbox" onChange={() => setGamesChecked(!gamesChecked)}></input>
             </label>
             <br />
             <TrelloCards 
@@ -105,16 +114,20 @@ export default function App() {
                 query={query}
                 onTyped={(query) => setQuery(query)}
                 onBooksNotChecked={(book) => setBooks(book)}
-                onMoviesNotChecked={(book) => setMovies(book)}
+                onMoviesNotChecked={(movie) => setMovies(movie)}
+                onGamesNotChecked={(game) => setGames(game)}
                 onBooksChecked={(book) => fetchBooks(book)}
                 onMoviesChecked={(movie) => fetchMovie(movie)}
+                onGamesChecked={(game) => fetchGame(game)}
                 booksChecked={booksChecked}
                 moviesChecked={moviesChecked}
+                gamesChecked={gamesChecked}
             />
             <Covers 
                 items={[
                     ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail), 
-                    ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path)
+                    ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path),
+                    ...games,
                 ]}
                 selectedItem={cards[selectedCardIndex]?.thumbnail}
                 onSelected={(item) => uploadCover(item)}
@@ -185,6 +198,9 @@ export default function App() {
 
     async function fetchGame(name) {
         const data = await TwitchAPI.getCovers(name);
+        if (!data.length) {
+            setMessage("No covers for this game found");
+        }
         setGames(data);
     }
 };
