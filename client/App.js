@@ -17,6 +17,7 @@ export default function App() {
     const [books, setBooks] = useState([]);
     const [movies, setMovies] = useState([]);                                             
     const [games, setGames] = useState([]);
+    const [anime, setAnime] = useState([]);
     const [boards, setBoards] = useState([]);
     const [cards, setCards] = useState([]);
     const [selectedBoardId, setSelectedBoardId] = useState("");
@@ -25,6 +26,7 @@ export default function App() {
     const [booksChecked, setBooksChecked] = useState(false);
     const [moviesChecked, setMoviesChecked] = useState(false);
     const [gamesChecked, setGamesChecked] = useState(false);
+    const [animeChecked, setAnimeChecked] = useState(false);
 
     useEffect(() => {
         if (selectedBoardId) {
@@ -105,6 +107,9 @@ export default function App() {
             </label>
             <label>Games
             <input type="checkbox" onChange={() => setGamesChecked(!gamesChecked)}></input>
+            </label>
+            <label>Anime
+            <input type="checkbox" onChange={() => setAnimeChecked(!animeChecked)}></input>
             </label>
             <br />
             <TrelloCards 
