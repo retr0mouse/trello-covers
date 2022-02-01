@@ -2,6 +2,7 @@ import Koa from 'koa';
 import fetch from 'node-fetch'; 
 import Router from 'koa-router';
 import cors from '@koa/cors';
+import { Cache } from './Cache.js';
 
 const app = new Koa();
 const router = new Router();
@@ -11,6 +12,13 @@ router.get('/', (ctx, next) => {
 });
 
 router.get('/games/:title', async (ctx, next) => {
+    const title = ctx.params.title;
+    const cacheKey = "games_" + title;
+    const data = Cache.get(cacheKey);
+    if(data){
+        ctx.body = data;
+        return;
+    }
     // fetch game ids
     const response = await fetch(`https://api.igdb.com/v4/games`, {
             method: "POST",
@@ -21,7 +29,7 @@ router.get('/games/:title', async (ctx, next) => {
             },
             body:  `fields id; limit 4;
                     where release_dates.platform = (6);
-                    where name ~ *"` + ctx.params.title + `"*;`,
+                    where name ~ *"` + title + `"*;`,
         });
     const gameIds = await response.json();
 
@@ -54,20 +62,35 @@ router.get('/games/:title', async (ctx, next) => {
 
     // respond with urls 
     ctx.body = urls;
+    Cache.put(cacheKey, urls);
 });
 
 router.get("/movies/:title", async (ctx, next) => {
     const title = ctx.params.title;
+    const cacheKey = "movies_" + title; 
+    let data = Cache.get(cacheKey);
+    if(data){
+        ctx.body = data;
+        return;
+    }
     const response = await fetch(`https://api.themoviedb.org/3/search/movie/?api_key=d0256790589a55b455aab52402dfc7bd&query=${title}&token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkMDI1Njc5MDU4OWE1NWI0NTVhYWI1MjQwMmRmYzdiZCIsInN1YiI6IjYxZjI1OTU2NTU5ZDIyMDEwNWNhMDZiNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._asLbJ7VJLrX69lbtJ0xfX7G8zLhyf1TzEy3Jhi_vW4`);
-    const data = await response.json();
+    data = await response.json();
     ctx.body = data;
+    Cache.put(cacheKey, data);
 });
 
 router.get("/books/:title", async (ctx, next) => {
     const title = ctx.params.title;
+    const cacheKey = "books_" + title;
+    let data = Cache.get(cacheKey);
+    if(data){
+        ctx.body = data;
+        return;
+    }
     const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${title}&key=AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY`);
-    const data = await response.json();
+    data = await response.json();
     ctx.body = data;
+    Cache.put(cacheKey, data);
 });
 
 router.get("/members/:token/:key", async(ctx, next) => {
