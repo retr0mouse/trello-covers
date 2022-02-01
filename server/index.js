@@ -14,7 +14,7 @@ router.get('/', (ctx, next) => {
 router.get('/games/:title', async (ctx, next) => {
     const title = ctx.params.title;
     const cacheKey = "games_" + title;
-    const data = Cache.get(cacheKey);
+    const data = await Cache.get(cacheKey);
     if(data){
         ctx.body = data;
         return;
@@ -62,13 +62,13 @@ router.get('/games/:title', async (ctx, next) => {
 
     // respond with urls 
     ctx.body = urls;
-    Cache.put(cacheKey, urls);
+    await Cache.put(cacheKey, urls);
 });
 
 router.get("/movies/:title", async (ctx, next) => {
     const title = ctx.params.title;
     const cacheKey = "movies_" + title; 
-    let data = Cache.get(cacheKey);
+    let data = await Cache.get(cacheKey);
     if(data){
         ctx.body = data;
         return;
@@ -76,13 +76,13 @@ router.get("/movies/:title", async (ctx, next) => {
     const response = await fetch(`https://api.themoviedb.org/3/search/movie/?api_key=d0256790589a55b455aab52402dfc7bd&query=${title}&token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkMDI1Njc5MDU4OWE1NWI0NTVhYWI1MjQwMmRmYzdiZCIsInN1YiI6IjYxZjI1OTU2NTU5ZDIyMDEwNWNhMDZiNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._asLbJ7VJLrX69lbtJ0xfX7G8zLhyf1TzEy3Jhi_vW4`);
     data = await response.json();
     ctx.body = data;
-    Cache.put(cacheKey, data);
+    await Cache.put(cacheKey, data);
 });
 
 router.get("/books/:title", async (ctx, next) => {
     const title = ctx.params.title;
     const cacheKey = "books_" + title;
-    let data = Cache.get(cacheKey);
+    let data = await Cache.get(cacheKey);
     if(data){
         ctx.body = data;
         return;
@@ -90,7 +90,7 @@ router.get("/books/:title", async (ctx, next) => {
     const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${title}&key=AIzaSyCPEDr5QVi6rbthmGTmqowctbm7-kfe4IY`);
     data = await response.json();
     ctx.body = data;
-    Cache.put(cacheKey, data);
+    await Cache.put(cacheKey, data);
 });
 
 router.get("/members/:token/:key", async(ctx, next) => {
