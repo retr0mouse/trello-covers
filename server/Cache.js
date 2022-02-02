@@ -1,18 +1,29 @@
 import fs from 'fs/promises';
+import { open } from 'sqlite';
+import sqlite3 from 'sqlite3'
 
 export class Cache{
+    static async init(){
+        Cache.db = await open({
+            filename: 'cache.db',
+            driver: sqlite3.Database
+        });
+        await Cache.db.exec('CREATE TABLE IF NOT EXISTS cache (key VARCHAR(1000) NOT NULL PRIMARY KEY , data text)');
+    }
+
     static async put(key, data){
-        const text = await fs.readFile("./cache.json", {encoding: "utf-8"});
-        const cache = JSON.parse(text);
-        cache[key] = data;
-        const json = JSON.stringify(cache);
-        await fs.writeFile("./cache.json", json, {encoding: "utf-8"});
+        const stringData = JSON.stringify(data); 
+        await Cache.db.run(
+            'INSERT INTO cache (key, data) VALUES(?, ?)',
+            key,
+            stringData
+        );
     }
 
     static async get(key){
-        const text = await fs.readFile("./cache.json", {encoding: "utf-8"});
-        const cache = JSON.parse(text);
-        const result = cache[key];
-        return result;
+        const result = await Cache.db.get('SELECT data FROM cache WHERE (key = ?)', key);
+        if(result){
+            return result.data;
+        }
     }
 }

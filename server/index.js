@@ -1,11 +1,12 @@
 import Koa from 'koa';
-import fetch from 'node-fetch'; 
+import fetch from 'node-fetch';
 import Router from 'koa-router';
 import cors from '@koa/cors';
 import { Cache } from './Cache.js';
 
 const app = new Koa();
 const router = new Router();
+Cache.init().catch((error) => console.log(error));
 
 router.get('/', (ctx, next) => {
     ctx.body = "I AM GROOT!";
