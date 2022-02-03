@@ -4,6 +4,7 @@ export class GoogleAPI{
         if (!response.ok) {
             throw new Error("Request failed with status code " + response.status);
         }
-        return await response.json();
+        const result = await response.json();
+        return result;
     }
 }

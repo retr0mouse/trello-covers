@@ -2,7 +2,7 @@ import Koa from 'koa';
 import fetch from 'node-fetch';
 import Router from 'koa-router';
 import cors from '@koa/cors';
-import { Cache } from './Cache.js';
+import { Cache } from './Cache';
 
 const app = new Koa();
 const router = new Router();
@@ -32,7 +32,7 @@ router.get('/games/:title', async (ctx, next) => {
                     where release_dates.platform = (6);
                     where name ~ *"` + title + `"*;`,
     });
-    const gameIds = await response.json();
+    const gameIds = (await response.json()) as Array<any>;
 
     // fetch covers for 4 game ids
     const covers = [];
@@ -47,7 +47,7 @@ router.get('/games/:title', async (ctx, next) => {
             body: `fields url; limit 1;
                     where game = ` + gameIds[i].id + `;`,
         });
-        const cover = (await response.json())[0];
+        const cover = ((await response.json()) as any[])[0];
         if (cover) {
             covers.push(cover);
         }
