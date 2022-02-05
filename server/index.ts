@@ -2,7 +2,7 @@ import Koa from 'koa';
 import fetch from 'node-fetch';
 import Router from 'koa-router';
 import cors from '@koa/cors';
-import { Cache } from './Cache';
+import { Cache } from './Cache.js';
 
 const app = new Koa();
 const router = new Router();
