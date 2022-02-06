@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+
 const Cover = styled.div`
     background-color: ${props => props.selected ? "rgb(129, 179, 64)" : "none"};
     padding: ${props => props.selected ? "5px" : 0};

@@ -1,9 +1,10 @@
 export class TwitchAPI{
-    static async getCovers(game){
+    static async getCovers(game: string): Promise<string>{
         const response = await fetch(`http://localhost:3000/games/`+ game);
         if (!response.ok) {
             throw new Error("Request failed with status code " + response.status);
         }
-        return await response.json();
+        const result = await response.json() as string;
+        return result;
     }
 }

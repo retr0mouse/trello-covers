@@ -32,7 +32,7 @@ router.get('/games/:title', async (ctx, next) => {
                     where release_dates.platform = (6);
                     where name ~ *"` + title + `"*;`,
     });
-    const gameIds = (await response.json()) as Array<any>;
+    const gameIds = await response.json() as any[];
 
     // fetch covers for 4 game ids
     const covers = [];
@@ -47,7 +47,7 @@ router.get('/games/:title', async (ctx, next) => {
             body: `fields url; limit 1;
                     where game = ` + gameIds[i].id + `;`,
         });
-        const cover = ((await response.json()) as any[])[0];
+        const cover = (await response.json() as any[])[0];
         if (cover) {
             covers.push(cover);
         }
@@ -120,12 +120,12 @@ router.get("/cards/:selectedId/:key/:token", async (ctx, next) => {
     ctx.body = data;
 })
 
-router.get("/attachment/:selectedId/:key/:token/:url", async (ctx, next) => {
-    const selectedId = ctx.params.selectedId;
-    const key = ctx.params.key;
-    const token = ctx.params.token;
-    const url = ctx.params.url;
-    const response = await fetch(`https://api.trello.com/1/cards/${selectedId}/attachments?key=${key}&token=${token}&setCover=${true}&url=${encodeURIComponent(url)}`, {
+router.get("/attachment", async (ctx, next) => {
+    const selectedId = ctx.request.query.selectedCardId as any;
+    const key = ctx.request.query.trelloKey as any;
+    const token = ctx.request.query.trelloToken as any;
+    const url = ctx.request.query.url as any;
+    await fetch(`https://api.trello.com/1/cards/${selectedId}/attachments?key=${key}&token=${token}&setCover=${true}&url=${encodeURIComponent(url)}`, {
         method: "POST",
     });
 })

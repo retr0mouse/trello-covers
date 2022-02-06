@@ -13,7 +13,7 @@ export function TrelloCredentials({trelloKey, trelloToken, onKeyChanged, onToken
             </label>
             <label>
                 Trello token:
-                <input 
+                <input
                     value={trelloToken} 
                     type="text" 
                     onChange={(event) => onTokenChanged(event.target.value)}

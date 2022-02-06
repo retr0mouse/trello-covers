@@ -196,7 +196,7 @@ export default function App() {
     async function uploadCover(thumbnail) {
         const selectedCard = cards[selectedCardIndex];
         try {
-            await TrelloAPI.addAttachment(thumbnail, selectedCard.id, trelloKey, trelloToken);
+            await TrelloAPI.addAttachment(selectedCard.id, trelloKey, trelloToken, thumbnail);
         } catch (error) {
             setMessage("👎");
             return;
