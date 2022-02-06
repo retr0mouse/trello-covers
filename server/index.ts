@@ -12,8 +12,8 @@ router.get('/', (ctx, next) => {
     ctx.body = "I AM GROOT!";
 });
 
-router.get('/games/:title', async (ctx, next) => {
-    const title = ctx.params.title;
+router.get('/games', async (ctx, next) => {
+    const title = ctx.request.query.title;
     const cacheKey = "games_" + title;
     const data = await Cache.get(cacheKey);
     if (data) {
@@ -66,8 +66,8 @@ router.get('/games/:title', async (ctx, next) => {
     await Cache.put(cacheKey, urls);
 });
 
-router.get("/movies/:title", async (ctx, next) => {
-    const title = ctx.params.title;
+router.get("/movies", async (ctx, next) => {
+    const title = ctx.request.query.title;
     const cacheKey = "movies_" + title;
     let data = await Cache.get(cacheKey);
     if (data) {
@@ -80,8 +80,8 @@ router.get("/movies/:title", async (ctx, next) => {
     await Cache.put(cacheKey, data);
 });
 
-router.get("/books/:title", async (ctx, next) => {
-    const title = ctx.params.title;
+router.get("/books", async (ctx, next) => {
+    const title = ctx.request.query.title;
     const cacheKey = "books_" + title;
     let data = await Cache.get(cacheKey);
     if (data) {
@@ -94,27 +94,27 @@ router.get("/books/:title", async (ctx, next) => {
     await Cache.put(cacheKey, data);
 });
 
-router.get("/members/:token/:key", async (ctx, next) => {
-    const token = ctx.params.token;
-    const key = ctx.params.key;
+router.get("/members", async (ctx, next) => {
+    const token = ctx.request.query.trelloToken;
+    const key = ctx.request.query.trelloKey;
     const response = await fetch(`https://api.trello.com/1/tokens/${token}/member?key=${key}`);
     const data = await response.json();
     ctx.body = data;
 })
 
-router.get("/boards/:id/:key/:token", async (ctx, next) => {
-    const id = ctx.params.id;
-    const key = ctx.params.key;
-    const token = ctx.params.token;
+router.get("/boards", async (ctx, next) => {
+    const id = ctx.request.query.memberId;
+    const key = ctx.request.query.trelloKey;
+    const token = ctx.request.query.trelloToken;
     const response = await fetch(`https://api.trello.com/1/members/${id}/boards?key=${key}&token=${token}`);
     const data = await response.json();
     ctx.body = data;
 })
 
-router.get("/cards/:selectedId/:key/:token", async (ctx, next) => {
-    const selectedId = ctx.params.selectedId;
-    const key = ctx.params.key;
-    const token = ctx.params.token;
+router.get("/cards", async (ctx, next) => {
+    const selectedId = ctx.request.query.selectedBoardId;
+    const key = ctx.request.query.trelloKey;
+    const token = ctx.request.query.trelloToken;
     const response = await fetch(`https://api.trello.com/1/boards/${selectedId}/cards?key=${key}&token=${token}`);
     const data = await response.json();
     ctx.body = data;
