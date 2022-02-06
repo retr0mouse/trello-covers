@@ -1,6 +1,6 @@
 export class TrelloAPI{
     static async getMember(trelloKey: string, trelloToken: string): Promise<TrelloMember> {
-        const response = await fetch(`http://localhost:3000/members/${trelloToken}/${trelloKey}`);
+        const response = await fetch(`http://localhost:3000/members/?trelloToken=${trelloToken}&trelloKey=${trelloKey}`);
         if(!response.ok){
             throw new Error("Request failed with status code " + response.status);
         }
@@ -9,7 +9,7 @@ export class TrelloAPI{
     }
 
     static async getBoards(memberId: string, trelloKey: string, trelloToken: string): Promise<BoardsResponse> {
-        const response = await fetch(`http://localhost:3000/boards/${memberId}/${trelloKey}/${trelloToken}`);
+        const response = await fetch(`http://localhost:3000/boards?memberId=${memberId}&trelloKey=${trelloKey}&trelloToken=${trelloToken}`);
         if(!response.ok){
             throw new Error("Request failed with status code " + response.status);
         }
@@ -18,7 +18,7 @@ export class TrelloAPI{
     }
 
     static async getCards(selectedBoardId: number, trelloKey: string, trelloToken: string): Promise<Cards> {
-        const response = await fetch(`http://localhost:3000/cards/${selectedBoardId}/${trelloKey}/${trelloToken}`);
+        const response = await fetch(`http://localhost:3000/cards?selectedBoardId=${selectedBoardId}&trelloKey=${trelloKey}&trelloToken=${trelloToken}`);
         if(!response.ok){
             throw new Error("Request failed with status code " + response.status);
         }
