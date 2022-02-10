@@ -15,7 +15,7 @@ export default function App() {
     const [trelloToken, setTrelloToken] = useState(window.localStorage.getItem("trelloToken") || "");
     const [trelloKey, setTrelloKey] = useState(window.localStorage.getItem("trelloKey") || "");
     const [books, setBooks] = useState([]);
-    const [movies, setMovies] = useState([]);                                             
+    const [movies, setMovies] = useState([]);
     const [games, setGames] = useState([]);
     const [boards, setBoards] = useState([]);
     const [cards, setCards] = useState([]);
@@ -37,26 +37,26 @@ export default function App() {
         const title = cards[selectedCardIndex]?.name ?? "";
         setQuery(title);
         if (selectedBoardId && title) {
-            if(booksChecked){
+            if (booksChecked) {
                 fetchBooks(title);
             }
-            else{
+            else {
                 setBooks([]);
             }
-            if(moviesChecked){
+            if (moviesChecked) {
                 fetchMovie(title);
             }
-            else{
+            else {
                 setMovies([]);
             }
-            if(gamesChecked){
+            if (gamesChecked) {
                 fetchGame(title);
             }
-            else{
+            else {
                 setGames([]);
             }
         }
-        else{
+        else {
             setBooks([]);
             setMovies([]);
             setGames([]);
@@ -76,45 +76,45 @@ export default function App() {
     return (
         <div>
             <h1> Hello, WorldqwerW! </h1>
-            <TrelloCredentials 
+            <TrelloCredentials
                 trelloKey={trelloKey}
-                trelloToken={trelloToken} 
+                trelloToken={trelloToken}
                 onKeyChanged={(key) => {
                     setTrelloKey(key);
                     window.localStorage.setItem("trelloKey", key);
-                }} 
+                }}
                 onTokenChanged={(token) => {
                     setTrelloToken(token);
                     window.localStorage.setItem("trelloToken", token);
                 }}
                 onValidate={() => fetchTrelloBoards()}
             />
-            
+
             <br />
             <TrelloBoards
-                boards={boards} 
-                selectedBoardId={selectedBoardId} 
+                boards={boards}
+                selectedBoardId={selectedBoardId}
                 onBoardSelected={(boardId) => setSelectedBoardId(boardId)}
             />
             <br />
             <label>Books
-            <input type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
+                <input type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
             </label>
             <label>Movies
-            <input type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
+                <input type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
             </label>
             <label>Games
-            <input type="checkbox" onChange={() => setGamesChecked(!gamesChecked)}></input>
+                <input type="checkbox" onChange={() => setGamesChecked(!gamesChecked)}></input>
             </label>
             <br />
-            <TrelloCards 
+            <TrelloCards
                 cards={cards}
                 selectedCardIndex={selectedCardIndex}
                 disabled={selectedBoardId === "" || cards.length === 0}
                 onSelected={(index) => setSelectedCardIndex(index)}
             />
             <br />
-            <SearchInput 
+            <SearchInput
                 query={query}
                 onTyped={(query) => setQuery(query)}
                 onBooksNotChecked={(book) => setBooks(book)}
@@ -127,16 +127,16 @@ export default function App() {
                 moviesChecked={moviesChecked}
                 gamesChecked={gamesChecked}
             />
-            <Covers 
+            <Covers
                 items={[
-                    ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail), 
+                    ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail),
                     ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path),
                     ...games,
                 ]}
                 selectedItem={cards[selectedCardIndex]?.thumbnail}
                 onSelected={(item) => uploadCover(item)}
             />
-            <Message 
+            <Message
                 message={message}
             />
         </div>
