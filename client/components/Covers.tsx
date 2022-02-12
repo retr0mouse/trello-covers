@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 interface Props{
     items: string[];
-    selectedItem: string;
+    selectedThumbnail: string;
     onSelected(item: string): void;
 }
 
@@ -25,14 +25,14 @@ export function Covers(props: Props): ReactElement {
     return (
         <>
             <CoverContainer>
-                {props.items?.map((item, index) => {
+                {props.items?.map((thumbnail, index) => {
                     return(
                         <Cover
                             key={index}
-                            selected={props.selectedItem === item}
+                            selected={props.selectedThumbnail === thumbnail}
                         >
-                            <img width="128px" src={item}></img><br />
-                            <button onClick={() => props.onSelected(item)}>✅</button>
+                            <img width="128px" src={thumbnail}></img><br />
+                            <button onClick={() => props.onSelected(thumbnail)}>✅</button>
                         </Cover>
                     )
                 })}

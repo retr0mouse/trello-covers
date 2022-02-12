@@ -133,7 +133,7 @@ export default function App() {
                     ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path),
                     ...games,
                 ]}
-                selectedItem={cards[selectedCardIndex]?.thumbnail}
+                selectedThumbnail={cards[selectedCardIndex]?.thumbnail}
                 onSelected={(item) => uploadCover(item)}
             />
             <Message
