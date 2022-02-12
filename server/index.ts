@@ -121,13 +121,14 @@ router.get("/cards", async (ctx, next) => {
 })
 
 router.get("/attachment", async (ctx, next) => {
-    const selectedId = ctx.request.query.selectedCardId as any;
-    const key = ctx.request.query.trelloKey as any;
-    const token = ctx.request.query.trelloToken as any;
-    const url = ctx.request.query.url as any;
+    const selectedId = ctx.request.query.selectedCardId as string;
+    const key = ctx.request.query.trelloKey as string;
+    const token = ctx.request.query.trelloToken as string;
+    const url = ctx.request.query.url as string;
     await fetch(`https://api.trello.com/1/cards/${selectedId}/attachments?key=${key}&token=${token}&setCover=${true}&url=${encodeURIComponent(url)}`, {
         method: "POST",
     });
+    ctx.body = "";
 })
 
 app
