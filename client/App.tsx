@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react" //"React" is a default export
 import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
-import { TrelloAPI } from "./apis/TrelloAPI";
+import { TrelloAPI, Cards } from "./apis/TrelloAPI";
 import { TwitchAPI } from "./apis/TwitchAPI";
 import { Covers } from "./components/Covers";
 import { Message } from "./components/Message";
@@ -14,11 +14,11 @@ export default function App() {
     const [query, setQuery] = useState("kekw");
     const [trelloToken, setTrelloToken] = useState(window.localStorage.getItem("trelloToken") || "");
     const [trelloKey, setTrelloKey] = useState(window.localStorage.getItem("trelloKey") || "");
-    const [books, setBooks] = useState([]);
-    const [movies, setMovies] = useState([]);
-    const [games, setGames] = useState([]);
-    const [boards, setBoards] = useState([]);
-    const [cards, setCards] = useState([]);
+    const [books, setBooks] = useState([]) as any[];
+    const [movies, setMovies] = useState([]) as any[];
+    const [games, setGames] = useState([]) as any[];
+    const [boards, setBoards] = useState([]) as any[];
+    const [cards, setCards] = useState([]) as any[];
     const [selectedBoardId, setSelectedBoardId] = useState("");
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
     const [message, setMessage] = useState("");
@@ -129,8 +129,8 @@ export default function App() {
             />
             <Covers
                 items={[
-                    ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail),
-                    ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path),
+                    ...books.map((book: any) => book.volumeInfo.imageLinks?.thumbnail).filter((thumbnail: string) => thumbnail),
+                    ...movies.map((movie: any) => movie.poster_path).filter((poster_path: string) => poster_path),
                     ...games,
                 ]}
                 selectedThumbnail={cards[selectedCardIndex]?.thumbnail}
@@ -142,7 +142,7 @@ export default function App() {
         </div>
     );
 
-    async function fetchBooks(name) {
+    async function fetchBooks(name: string) {
         const data = await GoogleAPI.getBooks(name);
         const filteredBooks = data.items.filter((book) => book.volumeInfo.imageLinks);
         if (!filteredBooks.length) {
@@ -151,7 +151,7 @@ export default function App() {
         setBooks(filteredBooks);
     }
 
-    async function fetchMovie(name) {
+    async function fetchMovie(name: string) {
         const data = await MovieAPI.getMovie(name);
         const filteredMovies = data.results.filter((movie) => movie.poster_path);
         if (!filteredMovies.length) {
@@ -163,7 +163,7 @@ export default function App() {
         setMovies(filteredMovies);
     }
 
-    async function fetchGame(name) {
+    async function fetchGame(name: string) {
         const data = await TwitchAPI.getCovers(name);
         if (!data.length) {
             setMessage("No covers for this game found");
@@ -186,14 +186,14 @@ export default function App() {
 
     async function fetchTrelloCards() {
         const cards = await TrelloAPI.getCards(selectedBoardId, trelloKey, trelloToken);
-        const filteredCards = cards.filter((card) => !card.cover.idAttachment);
+        const filteredCards = cards.filter((card: any) => !card.cover.idAttachment) as Cards;
         if (!filteredCards.length) {
             setMessage("No cards without covers");
         }
         setCards(filteredCards);
     }
 
-    async function uploadCover(thumbnail) {
+    async function uploadCover(thumbnail: string) {
         const selectedCard = cards[selectedCardIndex];
         try {
             await TrelloAPI.addAttachment(selectedCard.id, trelloKey, trelloToken, thumbnail);

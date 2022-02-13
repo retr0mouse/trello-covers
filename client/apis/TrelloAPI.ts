@@ -17,7 +17,7 @@ export class TrelloAPI{
         return result;
     }
 
-    static async getCards(selectedBoardId: number, trelloKey: string, trelloToken: string): Promise<Cards> {
+    static async getCards(selectedBoardId: string, trelloKey: string, trelloToken: string): Promise<Cards> {
         const response = await fetch(`http://localhost:3000/cards?selectedBoardId=${selectedBoardId}&trelloKey=${trelloKey}&trelloToken=${trelloToken}`);
         if(!response.ok){
             throw new Error("Request failed with status code " + response.status);
@@ -221,7 +221,9 @@ interface BackgroundImageScaled {
 
 // Cards interfaces
 
-interface Cards {
+export interface Cards {
+  length: any;
+  filter: any;
   id: string;
   checkItemStates?: any;
   closed: boolean;
