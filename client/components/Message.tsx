@@ -14,12 +14,12 @@ const MessageBox = styled.div`
     transform: translate(-50%, -50%);
 `;
 
-interface Props{
+interface Props {
     message: string
 }
 
-export function Message(props: Props): ReactElement{
-    return(
+export function Message(props: Props): ReactElement {
+    return (
         <>
             {props.message &&
                 <MessageBox>

@@ -1,6 +1,6 @@
-import React, {ReactElement} from "react";
+import React, { ReactElement } from "react";
 
-interface Props{
+interface Props {
     trelloKey: string,
     trelloToken: string,
     onKeyChanged(value: string): void,
@@ -13,9 +13,9 @@ export function TrelloCredentials(props: Props): ReactElement {
         <div>
             <label>
                 Trello key:
-                <input 
-                    value={props.trelloKey} 
-                    type="text" 
+                <input
+                    value={props.trelloKey}
+                    type="text"
                     onChange={(event) => props.onKeyChanged(event.target.value)}
                 >
                 </input>
@@ -24,8 +24,8 @@ export function TrelloCredentials(props: Props): ReactElement {
             <label>
                 Trello token:
                 <input
-                    value={props.trelloToken} 
-                    type="text" 
+                    value={props.trelloToken}
+                    type="text"
                     onChange={(event) => props.onTokenChanged(event.target.value)}
                 >
                 </input>

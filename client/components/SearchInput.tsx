@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 
-interface Props{
+interface Props {
     query: string,
     onTyped(text: string): void,
     onBooksChecked(books: any): void,

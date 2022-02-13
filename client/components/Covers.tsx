@@ -1,13 +1,13 @@
 import React, { ReactElement } from "react";
 import styled from "styled-components";
 
-interface Props{
+interface Props {
     items: string[];
     selectedThumbnail: string;
     onSelected(item: string): void;
 }
 
-interface CoverProps{
+interface CoverProps {
     selected: boolean;
 }
 
@@ -26,7 +26,7 @@ export function Covers(props: Props): ReactElement {
         <>
             <CoverContainer>
                 {props.items?.map((thumbnail, index) => {
-                    return(
+                    return (
                         <Cover
                             key={index}
                             selected={props.selectedThumbnail === thumbnail}
