@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react" //"React" is a default export
 import { GoogleAPI } from "./apis/GoogleAPI";
 import { MovieAPI } from "./apis/MovieDatabaseAPI";
-import { TrelloAPI } from "./apis/TrelloAPI";
+import { TrelloAPI, Cards } from "./apis/TrelloAPI";
 import { TwitchAPI } from "./apis/TwitchAPI";
 import { Covers } from "./components/Covers";
 import { Message } from "./components/Message";
@@ -14,11 +14,11 @@ export default function App() {
     const [query, setQuery] = useState("kekw");
     const [trelloToken, setTrelloToken] = useState(window.localStorage.getItem("trelloToken") || "");
     const [trelloKey, setTrelloKey] = useState(window.localStorage.getItem("trelloKey") || "");
-    const [books, setBooks] = useState([]);
-    const [movies, setMovies] = useState([]);                                             
-    const [games, setGames] = useState([]);
-    const [boards, setBoards] = useState([]);
-    const [cards, setCards] = useState([]);
+    const [books, setBooks] = useState([]) as any[];
+    const [movies, setMovies] = useState([]) as any[];
+    const [games, setGames] = useState([]) as any[];
+    const [boards, setBoards] = useState([]) as any[];
+    const [cards, setCards] = useState([]) as any[];
     const [selectedBoardId, setSelectedBoardId] = useState("");
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
     const [message, setMessage] = useState("");
@@ -37,26 +37,26 @@ export default function App() {
         const title = cards[selectedCardIndex]?.name ?? "";
         setQuery(title);
         if (selectedBoardId && title) {
-            if(booksChecked){
+            if (booksChecked) {
                 fetchBooks(title);
             }
-            else{
+            else {
                 setBooks([]);
             }
-            if(moviesChecked){
+            if (moviesChecked) {
                 fetchMovie(title);
             }
-            else{
+            else {
                 setMovies([]);
             }
-            if(gamesChecked){
+            if (gamesChecked) {
                 fetchGame(title);
             }
-            else{
+            else {
                 setGames([]);
             }
         }
-        else{
+        else {
             setBooks([]);
             setMovies([]);
             setGames([]);
@@ -76,45 +76,45 @@ export default function App() {
     return (
         <div>
             <h1> Hello, WorldqwerW! </h1>
-            <TrelloCredentials 
+            <TrelloCredentials
                 trelloKey={trelloKey}
-                trelloToken={trelloToken} 
+                trelloToken={trelloToken}
                 onKeyChanged={(key) => {
                     setTrelloKey(key);
                     window.localStorage.setItem("trelloKey", key);
-                }} 
+                }}
                 onTokenChanged={(token) => {
                     setTrelloToken(token);
                     window.localStorage.setItem("trelloToken", token);
                 }}
                 onValidate={() => fetchTrelloBoards()}
             />
-            
+
             <br />
             <TrelloBoards
-                boards={boards} 
-                selectedBoardId={selectedBoardId} 
+                boards={boards}
+                selectedBoardId={selectedBoardId}
                 onBoardSelected={(boardId) => setSelectedBoardId(boardId)}
             />
             <br />
             <label>Books
-            <input type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
+                <input type="checkbox" onChange={() => setBooksChecked(!booksChecked)}></input>
             </label>
             <label>Movies
-            <input type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
+                <input type="checkbox" onChange={() => setMoviesChecked(!moviesChecked)}></input>
             </label>
             <label>Games
-            <input type="checkbox" onChange={() => setGamesChecked(!gamesChecked)}></input>
+                <input type="checkbox" onChange={() => setGamesChecked(!gamesChecked)}></input>
             </label>
             <br />
-            <TrelloCards 
+            <TrelloCards
                 cards={cards}
                 selectedCardIndex={selectedCardIndex}
                 disabled={selectedBoardId === "" || cards.length === 0}
                 onSelected={(index) => setSelectedCardIndex(index)}
             />
             <br />
-            <SearchInput 
+            <SearchInput
                 query={query}
                 onTyped={(query) => setQuery(query)}
                 onBooksNotChecked={(book) => setBooks(book)}
@@ -127,22 +127,22 @@ export default function App() {
                 moviesChecked={moviesChecked}
                 gamesChecked={gamesChecked}
             />
-            <Covers 
+            <Covers
                 items={[
-                    ...books.map(book => book.volumeInfo.imageLinks?.thumbnail).filter(thumbnail => thumbnail), 
-                    ...movies.map(movie => movie.poster_path).filter(poster_path => poster_path),
+                    ...books.map((book: any) => book.volumeInfo.imageLinks?.thumbnail).filter((thumbnail: string) => thumbnail),
+                    ...movies.map((movie: any) => movie.poster_path).filter((poster_path: string) => poster_path),
                     ...games,
                 ]}
-                selectedItem={cards[selectedCardIndex]?.thumbnail}
+                selectedThumbnail={cards[selectedCardIndex]?.thumbnail}
                 onSelected={(item) => uploadCover(item)}
             />
-            <Message 
+            <Message
                 message={message}
             />
         </div>
     );
 
-    async function fetchBooks(name) {
+    async function fetchBooks(name: string) {
         const data = await GoogleAPI.getBooks(name);
         const filteredBooks = data.items.filter((book) => book.volumeInfo.imageLinks);
         if (!filteredBooks.length) {
@@ -151,7 +151,7 @@ export default function App() {
         setBooks(filteredBooks);
     }
 
-    async function fetchMovie(name) {
+    async function fetchMovie(name: string) {
         const data = await MovieAPI.getMovie(name);
         const filteredMovies = data.results.filter((movie) => movie.poster_path);
         if (!filteredMovies.length) {
@@ -163,7 +163,7 @@ export default function App() {
         setMovies(filteredMovies);
     }
 
-    async function fetchGame(name) {
+    async function fetchGame(name: string) {
         const data = await TwitchAPI.getCovers(name);
         if (!data.length) {
             setMessage("No covers for this game found");
@@ -186,17 +186,17 @@ export default function App() {
 
     async function fetchTrelloCards() {
         const cards = await TrelloAPI.getCards(selectedBoardId, trelloKey, trelloToken);
-        const filteredCards = cards.filter((card) => !card.cover.idAttachment);
+        const filteredCards = cards.filter((card: any) => !card.cover.idAttachment) as Cards;
         if (!filteredCards.length) {
             setMessage("No cards without covers");
         }
         setCards(filteredCards);
     }
 
-    async function uploadCover(thumbnail) {
+    async function uploadCover(thumbnail: string) {
         const selectedCard = cards[selectedCardIndex];
         try {
-            await TrelloAPI.addAttachment(thumbnail, selectedCard.id, trelloKey, trelloToken);
+            await TrelloAPI.addAttachment(selectedCard.id, trelloKey, trelloToken, thumbnail);
         } catch (error) {
             setMessage("👎");
             return;

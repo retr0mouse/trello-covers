@@ -1,3 +1,4 @@
+import React, { ReactElement } from "react";
 import styled from "styled-components";
 
 const MessageBox = styled.div`
@@ -13,12 +14,16 @@ const MessageBox = styled.div`
     transform: translate(-50%, -50%);
 `;
 
-export function Message({message}){
-    return(
+interface Props {
+    message: string
+}
+
+export function Message(props: Props): ReactElement {
+    return (
         <>
-            {message &&
+            {props.message &&
                 <MessageBox>
-                    <h4>{message}</h4>
+                    <h4>{props.message}</h4>
                 </MessageBox>
             }
         </>

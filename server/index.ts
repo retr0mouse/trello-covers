@@ -12,8 +12,8 @@ router.get('/', (ctx, next) => {
     ctx.body = "I AM GROOT!";
 });
 
-router.get('/games/:title', async (ctx, next) => {
-    const title = ctx.params.title;
+router.get('/games', async (ctx, next) => {
+    const title = ctx.request.query.title;
     const cacheKey = "games_" + title;
     const data = await Cache.get(cacheKey);
     if (data) {
@@ -32,7 +32,7 @@ router.get('/games/:title', async (ctx, next) => {
                     where release_dates.platform = (6);
                     where name ~ *"` + title + `"*;`,
     });
-    const gameIds = await response.json();
+    const gameIds = await response.json() as any[];
 
     // fetch covers for 4 game ids
     const covers = [];
@@ -47,7 +47,7 @@ router.get('/games/:title', async (ctx, next) => {
             body: `fields url; limit 1;
                     where game = ` + gameIds[i].id + `;`,
         });
-        const cover = (await response.json())[0];
+        const cover = (await response.json() as any[])[0];
         if (cover) {
             covers.push(cover);
         }
@@ -66,8 +66,8 @@ router.get('/games/:title', async (ctx, next) => {
     await Cache.put(cacheKey, urls);
 });
 
-router.get("/movies/:title", async (ctx, next) => {
-    const title = ctx.params.title;
+router.get("/movies", async (ctx, next) => {
+    const title = ctx.request.query.title;
     const cacheKey = "movies_" + title;
     let data = await Cache.get(cacheKey);
     if (data) {
@@ -80,8 +80,8 @@ router.get("/movies/:title", async (ctx, next) => {
     await Cache.put(cacheKey, data);
 });
 
-router.get("/books/:title", async (ctx, next) => {
-    const title = ctx.params.title;
+router.get("/books", async (ctx, next) => {
+    const title = ctx.request.query.title;
     const cacheKey = "books_" + title;
     let data = await Cache.get(cacheKey);
     if (data) {
@@ -94,40 +94,41 @@ router.get("/books/:title", async (ctx, next) => {
     await Cache.put(cacheKey, data);
 });
 
-router.get("/members/:token/:key", async (ctx, next) => {
-    const token = ctx.params.token;
-    const key = ctx.params.key;
+router.get("/members", async (ctx, next) => {
+    const token = ctx.request.query.trelloToken;
+    const key = ctx.request.query.trelloKey;
     const response = await fetch(`https://api.trello.com/1/tokens/${token}/member?key=${key}`);
     const data = await response.json();
     ctx.body = data;
 })
 
-router.get("/boards/:id/:key/:token", async (ctx, next) => {
-    const id = ctx.params.id;
-    const key = ctx.params.key;
-    const token = ctx.params.token;
+router.get("/boards", async (ctx, next) => {
+    const id = ctx.request.query.memberId;
+    const key = ctx.request.query.trelloKey;
+    const token = ctx.request.query.trelloToken;
     const response = await fetch(`https://api.trello.com/1/members/${id}/boards?key=${key}&token=${token}`);
     const data = await response.json();
     ctx.body = data;
 })
 
-router.get("/cards/:selectedId/:key/:token", async (ctx, next) => {
-    const selectedId = ctx.params.selectedId;
-    const key = ctx.params.key;
-    const token = ctx.params.token;
+router.get("/cards", async (ctx, next) => {
+    const selectedId = ctx.request.query.selectedBoardId;
+    const key = ctx.request.query.trelloKey;
+    const token = ctx.request.query.trelloToken;
     const response = await fetch(`https://api.trello.com/1/boards/${selectedId}/cards?key=${key}&token=${token}`);
     const data = await response.json();
     ctx.body = data;
 })
 
-router.get("/attachment/:selectedId/:key/:token/:url", async (ctx, next) => {
-    const selectedId = ctx.params.selectedId;
-    const key = ctx.params.key;
-    const token = ctx.params.token;
-    const url = ctx.params.url;
-    const response = await fetch(`https://api.trello.com/1/cards/${selectedId}/attachments?key=${key}&token=${token}&setCover=${true}&url=${encodeURIComponent(url)}`, {
+router.get("/attachment", async (ctx, next) => {
+    const selectedId = ctx.request.query.selectedCardId as string;
+    const key = ctx.request.query.trelloKey as string;
+    const token = ctx.request.query.trelloToken as string;
+    const url = ctx.request.query.url as string;
+    await fetch(`https://api.trello.com/1/cards/${selectedId}/attachments?key=${key}&token=${token}&setCover=${true}&url=${encodeURIComponent(url)}`, {
         method: "POST",
     });
+    ctx.body = "";
 })
 
 app
