@@ -1,12 +1,12 @@
-export class MovieAPI{
-    static async getMovie(movieTitle: string): Promise<MoviesResponse>{
-        const response = await fetch(`http://localhost:3000/movies?title=${movieTitle}`);
-        if (!response.ok) {
-            throw new Error("Request failed with status code " + response.status);
-        }
-        const result = await response.json() as MoviesResponse;
-        return result;
+export class MovieAPI {
+  static async getMovie(movieTitle: string): Promise<MoviesResponse> {
+    const response = await fetch(`http://localhost:3000/movies?title=${movieTitle}`);
+    if (!response.ok) {
+      throw new Error("Request failed with status code " + response.status);
     }
+    const result = await response.json() as MoviesResponse;
+    return result;
+  }
 }
 
 interface MoviesResponse {
