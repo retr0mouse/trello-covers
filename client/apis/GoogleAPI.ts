@@ -1,12 +1,12 @@
-export class GoogleAPI{
-    static async getBooks(name: string): Promise<BooksResponse> {
-        const response = await fetch(`http://localhost:3000/books?title=${name}`);
-        if (!response.ok) {
-            throw new Error("Request failed with status code " + response.status);
-        }
-        const result = await response.json() as BooksResponse;
-        return result;
+export class GoogleAPI {
+  static async getBooks(name: string): Promise<BooksResponse> {
+    const response = await fetch(`http://localhost:3000/books?title=${name}`);
+    if (!response.ok) {
+      throw new Error("Request failed with status code " + response.status);
     }
+    const result = await response.json() as BooksResponse;
+    return result;
+  }
 }
 
 interface BooksResponse {
