@@ -1,6 +1,11 @@
 import React, { ReactElement } from "react";
 import styled from "styled-components";
 
+const Cover = styled.div<CoverProps>`
+    background-color: ${(props) => props.selected ? "rgb(129, 179, 64)" : "none"};
+    padding: ${(props) => props.selected ? "5px" : 0};
+`;
+
 interface Props {
     items: string[];
     selectedThumbnail: string;
@@ -11,10 +16,7 @@ interface CoverProps {
     selected: boolean;
 }
 
-const Cover = styled.div<CoverProps>`
-    background-color: ${(props) => props.selected ? "rgb(129, 179, 64)" : "none"};
-    padding: ${(props) => props.selected ? "5px" : 0};
-`;
+
 
 const CoverContainer = styled.div`
     display: flex;
